@@ -187,13 +187,19 @@ $(TARGET).ll: $(LLS)
 	@echo "[LLVM-LINK] $(TARGET).ll"
 	$Q$(LLVM-LINK) -S $(LLS)  -o $(TARGET).ll
 
-$(TARGET).bc: $(TARGET).ll native
+$(TARGET).bc: $(TARGET).ll
 	@echo "[LLVM-AS] $(TARGET).bc"
 	$Q$(LLVM-AS) $(TARGET).ll -o $(TARGET).bc
+
+$(TARGET).elf.ll: $(TARGET).bc native
 	@echo "[INCEPTION-CL] $(TARGET).elf $(TARGET).bc"
 	$Q$(INCEPTION-CL) $(INCEPTION_FLAGS) $(TARGET).elf $(TARGET).bc
 
-inception: $(TARGET).bc
+$(TARGET)_merged.bc: $(TARGET).elf.ll
+	@echo "[LLVM-AS] $(TARGET)_merged.bc"
+	$Q$(LLVM-AS) $(TARGET).elf.ll -o $(TARGET)_merged.bc
+
+inception: $(TARGET)_merged.bc
 
 
 openocd:
@@ -229,7 +235,7 @@ template: cube src
 	cp -i $(CUBE_DIR)/Projects/$(BOARD)/$(LDFILE) $(MCU_LC).ld
 
 run-klee:
-	klee --search=dfs $(TARGET).bc
+	klee --search=dfs $(TARGET)_merged.bc
 
 clean: clean-native clean-inception clean-klee
 
@@ -241,10 +247,11 @@ clean-native:
 	@echo "[RMDIR]   dep"          ; rm -fr dep
 	@echo "[RMDIR]   obj"          ; rm -fr obj
 
-clean-inception:
-	@echo "[RM]      $(TARGET).ll" ; rm -f $(TARGET).ll
-	@echo "[RM]      $(TARGET).bc" ; rm -f $(TARGET).bc
-	@echo "[RMDIR]   ll"           ; rm -fr ll
+clean-inception: clean-native
+	@echo "[RM]      $(TARGET).ll"     ; rm -f $(TARGET).ll
+	@echo "[RM]      $(TARGET).bc"     ; rm -f $(TARGET).bc
+	@echo "[RM]      *.dis"            ; rm -f *.dis
+	@echo "[RMDIR]   ll"               ; rm -fr ll
 
 clean-klee:
 	@echo "[RM]      klee*" ; rm -rf klee*
