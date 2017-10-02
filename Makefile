@@ -158,7 +158,7 @@ dep obj src ll:
 	@echo "[MKDIR]   $@"
 	$Qmkdir -p $@
 
-obj/%.o : %.c | $(dirs)
+obj/%.o : %.c | dirs
 	@echo "[CC]      $(notdir $<)"
 	$Q$(CC) $(CFLAGS) -c -o $@ $< -MMD -MF dep/$(*F).d
 
@@ -176,7 +176,7 @@ $(TARGET).bin: $(TARGET).elf
 
 native: $(TARGET).bin
 
-ll/%.ll : %.c | $(dirs)
+ll/%.ll : %.c | dirs
 	@echo "[CLANG] $(notdir $<)"
 	$Q$(CLANG) $(CLANG_FLAGS) -o $@ $<
 
