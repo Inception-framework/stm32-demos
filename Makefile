@@ -16,7 +16,7 @@
 # Author	Steffen Vogel <post@steffenvogel.de>
 # Link		http://www.steffenvogel.de
 #
-# edited for the STM32L152RE Nucleo by Giovanni Camurati
+# edited for the STM32L152RE Nucleo and Inception by Giovanni Camurati
 
 # A name common to all output files (elf, map, hex, bin, lst)
 TARGET     = demo
@@ -86,6 +86,9 @@ OCD        = openocd
 # Defines
 DEFS       = -D$(MCU_MC) -DUSE_HAL_DRIVER
 
+# Inception path
+INCEPTION_PATH=../../
+
 # Debug specific definitions for semihosting
 DEFS       += -DUSE_DBPRINTF
 
@@ -124,18 +127,18 @@ LLS        = $(addprefix ll/,$(SRCS:.c=.ll))
 DEPS       = $(addprefix dep/,$(SRCS:.c=.d))
 
 # CLANG & LLVM
-CLANG_PATH=../Inception/tools/llvm/build_debug/Debug+Asserts/bin/
+CLANG_PATH=$(INCEPTION_PATH)/tools/llvm/build_debug/Debug+Asserts/bin/
 CLANG=$(CLANG_PATH)/clang
 LLVM-LINK=$(CLANG_PATH)/llvm-link
 LLVM-AS=$(CLANG_PATH)/llvm-as
 
 CLANG_FLAGS=-mthumb --target=thumbv7m-eabi -mcpu=cortex-m3
-CLANG_FLAGS    += -ffunction-sections -fdata-sections
+#CLANG_FLAGS    += -ffunction-sections -fdata-sections
 CLANG_FLAGS    += $(INCS) $(DEFS)
 CLANG_FLAGS    += -emit-llvm -g -S
-CLANG_FLAGS    += ../Inception/Analyzer/include/
+CLANG_FLAGS    += $(INCEPTION_PATH)/Analyzer/include/
 
-INCEPTION-CL=../Inception/Compiler/Debug+Asserts/bin/inception-cl
+INCEPTION-CL=$(INCEPTION_PATH)/Compiler/Debug+Asserts/bin/inception-cl
 INCEPTION_FLAGS=
 
 # Prettify output
