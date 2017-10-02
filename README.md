@@ -5,14 +5,20 @@ This is a template application for the STM32 ARM microcontrollers that compiles 
 It serves as a quick-start for those who do not wish to use an IDE, but rather
 develop in a text editor of choice and build from the command line.
 
+We extended this makefile to use the Inception project.
+
 ## Target Overview
 
-  - `all`       Builds the target ELF binary.
-  - `program`   Flashes the ELF binary to the target board.
-  - `debug`     Launches GDB and connects to the target.
-  - `cube`      Downloads the most recent STM32Cube version from the ST website and extract it to `cube`.
-  - `template`  Copies a simple example/template, startup code and a linker script from the `cube` to your `src` directory.
-  - `clean`     Remove all files and directories which have been created during the compilation.
+  - `all`        Builds the binary and the llvm, it includes decompilation of asm.
+  - `inception`  Builds the binary and the llvm, it includes decompilation of asm.
+  - `native`     Builds the binary.
+  - `run-klee`   Runs Inception's klee.
+  - `program`    Flashes the ELF binary to the target board.
+  - `debug`      Launches GDB and connects to the target.
+  - `cube`       Downloads the most recent STM32Cube version from the ST website and extract it to `cube`.
+  - `template`   Copies a simple example/template, startup code and a linker script from the `cube` to your `src` directory.
+  - `clean`      Remove all files and directories which have been created during the compilation.
+  - `clean-klee` Remove all files and directories which have been created by Klee.
 
 ## Installing
 

@@ -16,29 +16,29 @@
 # Author	Steffen Vogel <post@steffenvogel.de>
 # Link		http://www.steffenvogel.de
 #
-# edited for the STM32F4-Discovery
+# edited for the STM32L152RE Nucleo by Giovanni Camurati
 
 # A name common to all output files (elf, map, hex, bin, lst)
 TARGET     = demo
 
 # Take a look into $(CUBE_DIR)/Drivers/BSP for available BSPs
 # name needed in upper case and lower case
-BOARD      = STM32F446ZE-Nucleo
-BOARD_UC   = STM32F4xx_Nucleo_144
-BOARD_LC   = stm32f4xx_nucleo_144
+BOARD      = STM32L152RE-Nucleo
+BOARD_UC   = STM32L152RE_NUCLEO
+BOARD_LC   = stm32l1xx_nucleo
 BSP_BASE   = $(BOARD_LC)
 
-OCDFLAGS   = -f board/stm32f4discovery.cfg
+OCDFLAGS   = -f board/st_nucleo_l1.cfg
 GDBFLAGS   =
 
 #EXAMPLE   = Templates
-EXAMPLE    = Examples/GPIO/GPIO_IOToggle
+EXAMPLE    = Examples/RCC/RCC_ClockConfig
 
 # MCU family and type in various capitalizations o_O
-MCU_FAMILY = stm32f4xx
-MCU_LC     = stm32f446xx
-MCU_MC     = STM32F446xx
-MCU_UC     = STM32F446ZE
+MCU_FAMILY = stm32l1xx
+MCU_LC     = stm32l152xe
+MCU_MC     = STM32L152xE
+MCU_UC     = STM32L152RE
 
 # path of the ld-file inside the example directories
 LDFILE     = $(EXAMPLE)/SW4STM32/$(BOARD_UC)/$(MCU_UC)Tx_FLASH.ld
@@ -47,23 +47,23 @@ LDFILE     = $(EXAMPLE)/SW4STM32/$(BOARD_UC)/$(MCU_UC)Tx_FLASH.ld
 # Your C files from the /src directory
 SRCS       = main.c
 SRCS      += system_$(MCU_FAMILY).c
-SRCS      += stm32f4xx_it.c
+SRCS      += stm32l1xx_it.c
 
 # Basic HAL libraries
-SRCS      += stm32f4xx_hal_rcc.c stm32f4xx_hal_rcc_ex.c stm32f4xx_hal.c stm32f4xx_hal_cortex.c stm32f4xx_hal_gpio.c stm32f4xx_hal_pwr_ex.c $(BSP_BASE).c
+SRCS      += stm32l1xx_hal_rcc.c stm32l1xx_hal_rcc_ex.c stm32l1xx_hal.c stm32l1xx_hal_cortex.c stm32l1xx_hal_gpio.c stm32l1xx_hal_pwr_ex.c $(BSP_BASE).c
 
 # Directories
 OCD_DIR    = /usr/share/openocd/scripts
 
 CUBE_DIR   = cube
 
-BSP_DIR    = $(CUBE_DIR)/Drivers/BSP/$(BOARD_UC)
-HAL_DIR    = $(CUBE_DIR)/Drivers/STM32F4xx_HAL_Driver
+BSP_DIR    = $(CUBE_DIR)/Drivers/BSP/STM32L1xx_Nucleo/
+HAL_DIR    = $(CUBE_DIR)/Drivers/STM32L1xx_HAL_Driver
 CMSIS_DIR  = $(CUBE_DIR)/Drivers/CMSIS
 
-DEV_DIR    = $(CMSIS_DIR)/Device/ST/STM32F4xx
+DEV_DIR    = $(CMSIS_DIR)/Device/ST/STM32L1xx
 
-CUBE_URL   = http://www.st.com/st-web-ui/static/active/en/st_prod_software_internet/resource/technical/software/firmware/stm32cubef4.zip
+CUBE_URL   = http://www.st.com/st-web-ui/static/active/en/st_prod_software_internet/resource/technical/software/firmware/stm32cubel1.zip
 
 # that's it, no need to change anything below this line!
 
@@ -100,11 +100,12 @@ INCS      += -I$(HAL_DIR)/Inc
 LIBS       = -L$(CMSIS_DIR)/Lib
 
 # Compiler flags
-CFLAGS     = -Wall -g -std=c99 -Os
-CFLAGS    += -mlittle-endian -mcpu=cortex-m4 -march=armv7e-m -mthumb
-CFLAGS    += -mfpu=fpv4-sp-d16 -mfloat-abi=hard
-CFLAGS    += -ffunction-sections -fdata-sections
-CFLAGS    += $(INCS) $(DEFS)
+CFLAGS     = -g -march=armv7-m -mthumb -mcpu=cortex-m3 -Wa,-mimplicit-it=thumb
+#CFLAGS     = -Wall -g -std=c99 -Os
+#CFLAGS    += -mlittle-endian -mcpu=cortex-m3 -march=armv7e-m -mthumb
+#CFLAGS    += -mfpu=fpv4-sp-d16 -mfloat-abi=hard
+#CFLAGS    += -ffunction-sections -fdata-sections
+CFLAGS     += $(INCS) $(DEFS)
 
 # Linker flags
 LDFLAGS    = -Wl,--gc-sections -Wl,-Map=$(TARGET).map $(LIBS) -T$(MCU_LC).ld
@@ -119,7 +120,23 @@ VPATH     += $(HAL_DIR)/Src
 VPATH     += $(DEV_DIR)/Source/
 
 OBJS       = $(addprefix obj/,$(SRCS:.c=.o))
+LLS        = $(addprefix ll/,$(SRCS:.c=.ll))
 DEPS       = $(addprefix dep/,$(SRCS:.c=.d))
+
+# CLANG & LLVM
+CLANG_PATH=../Inception/tools/llvm/build_debug/Debug+Asserts/bin/
+CLANG=$(CLANG_PATH)/clang
+LLVM-LINK=$(CLANG_PATH)/llvm-link
+LLVM-AS=$(CLANG_PATH)/llvm-as
+
+CLANG_FLAGS=-mthumb --target=thumbv7m-eabi -mcpu=cortex-m3
+CLANG_FLAGS    += -ffunction-sections -fdata-sections
+CLANG_FLAGS    += $(INCS) $(DEFS)
+CLANG_FLAGS    += -emit-llvm -g -S
+CLANG_FLAGS    += ../Inception/Analyzer/include/
+
+INCEPTION-CL=../Inception/Compiler/Debug+Asserts/bin/inception-cl
+INCEPTION_FLAGS=
 
 # Prettify output
 V = 0
@@ -130,18 +147,18 @@ endif
 
 ###################################################
 
-.PHONY: all dirs program debug template clean
+.PHONY: all dirs program debug template clean inception native run-klee
 
-all: $(TARGET).bin
+all: inception
 
 -include $(DEPS)
 
-dirs: dep obj cube
-dep obj src:
+dirs: dep obj ll cube
+dep obj src ll:
 	@echo "[MKDIR]   $@"
 	$Qmkdir -p $@
 
-obj/%.o : %.c | dirs
+obj/%.o : %.c | $(dirs)
 	@echo "[CC]      $(notdir $<)"
 	$Q$(CC) $(CFLAGS) -c -o $@ $< -MMD -MF dep/$(*F).d
 
@@ -156,6 +173,25 @@ $(TARGET).elf: $(OBJS)
 $(TARGET).bin: $(TARGET).elf
 	@echo "[OBJCOPY] $(TARGET).bin"
 	$Q$(OBJCOPY) -O binary $< $@
+
+native: $(TARGET).bin
+
+ll/%.ll : %.c | $(dirs)
+	@echo "[CLANG] $(notdir $<)"
+	$Q$(CLANG) $(CLANG_FLAGS) -o $@ $<
+
+$(TARGET).ll: $(LLS)
+	@echo "[LLVM-LINK] $(TARGET).ll"
+	$Q$(LLVM-LINK) -S $(LLS)  -o $(TARGET).ll
+
+$(TARGET).bc: $(TARGET).ll native
+	@echo "[LLVM-AS] $(TARGET).bc"
+	$Q$(LLVM-AS) $(TARGET).ll -o $(TARGET).bc
+	@echo "[INCEPTION-CL] $(TARGET).elf $(TARGET).bc"
+	$Q$(INCEPTION-CL) $(INCEPTION_FLAGS) $(TARGET).elf $(TARGET).bc
+
+inception: $(TARGET).bc
+
 
 openocd:
 	$(OCD) -s $(OCD_DIR) $(OCDFLAGS)
@@ -189,7 +225,12 @@ template: cube src
 	cp -i $(DEV_DIR)/Source/Templates/gcc/startup_$(MCU_LC).s src
 	cp -i $(CUBE_DIR)/Projects/$(BOARD)/$(LDFILE) $(MCU_LC).ld
 
-clean:
+run-klee:
+	klee --search=dfs $(TARGET).bc
+
+clean: clean-native clean-inception clean-klee
+
+clean-native:
 	@echo "[RM]      $(TARGET).bin"; rm -f $(TARGET).bin
 	@echo "[RM]      $(TARGET).elf"; rm -f $(TARGET).elf
 	@echo "[RM]      $(TARGET).map"; rm -f $(TARGET).map
@@ -197,3 +238,10 @@ clean:
 	@echo "[RMDIR]   dep"          ; rm -fr dep
 	@echo "[RMDIR]   obj"          ; rm -fr obj
 
+clean-inception:
+	@echo "[RM]      $(TARGET).ll" ; rm -f $(TARGET).ll
+	@echo "[RM]      $(TARGET).bc" ; rm -f $(TARGET).bc
+	@echo "[RMDIR]   ll"           ; rm -fr ll
+
+clean-klee:
+	@echo "[RM]      klee*" ; rm -rf klee*
