@@ -298,7 +298,7 @@ void HAL_RCC_DeInit(void)
   */
 HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
 {
-   uint32_t tickstart = 0U;
+  uint32_t tickstart = 0U;
   
   /* Check the parameters */
   assert_param(RCC_OscInitStruct != NULL);
@@ -383,8 +383,8 @@ HAL_StatusTypeDef HAL_RCC_OscConfig(RCC_OscInitTypeDef  *RCC_OscInitStruct)
     {
       /* Check the HSI State */
       if(RCC_OscInitStruct->HSIState != RCC_HSI_OFF)
-      {
-       /* Enable the Internal High Speed oscillator (HSI). */
+      {        
+        /* Enable the Internal High Speed oscillator (HSI). */
         __HAL_RCC_HSI_ENABLE();
         
         /* Get Start Tick */

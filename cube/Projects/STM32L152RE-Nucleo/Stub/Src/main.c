@@ -99,7 +99,6 @@ int main(void)
 
   HAL_GPIO_WritePin(GPIOC,GPIO_PIN_10, GPIO_PIN_RESET);
 
-  EXTI15_10_IRQHandler_Config();
   /* Infinite loop */
   while (1)
   {
@@ -170,30 +169,6 @@ static void Error_Handler(void)
   {
   }
 }
-
-/**
-  * @brief  Configures EXTI lines 15 to 10 (connected to PC.13 pin) in interrupt mode
-  * @param  None
-  * @retval None
-  */
-static void EXTI15_10_IRQHandler_Config(void)
-{
-  GPIO_InitTypeDef   GPIO_InitStructure;
-
-  /* Enable GPIOC clock */
-  __HAL_RCC_GPIOC_CLK_ENABLE();
-
-  /* Configure PC.13 pin as input floating */
-  GPIO_InitStructure.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStructure.Pull = GPIO_NOPULL;
-  GPIO_InitStructure.Pin = GPIO_PIN_13;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStructure);
-
-  /* Enable and set EXTI lines 15 to 10 Interrupt to the lowest priority */
-  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 2, 0);
-  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
-}
-
 
 #ifdef  USE_FULL_ASSERT
 

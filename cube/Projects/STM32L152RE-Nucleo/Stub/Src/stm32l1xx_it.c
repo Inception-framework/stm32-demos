@@ -67,119 +67,139 @@
 void GLOBAL_HANDLER(unsigned id)
 { 
   __disable_irq();
-  BSP_LED_On(LED2);
+  //BSP_LED_On(LED2);
   HAL_GPIO_WritePin(GPIOC,GPIO_PIN_10, GPIO_PIN_SET);
   *id_ptr = id;
   IDs[id]=1;
   while(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_12) == GPIO_PIN_RESET);
-  BSP_LED_Off(LED2);
+  //BSP_LED_Off(LED2);
   HAL_GPIO_WritePin(GPIOC,GPIO_PIN_10, GPIO_PIN_RESET);
   __enable_irq();
   
   while(IDs[id]!=0); //wait for ack from klee (klee handler returns)
 }
 
-#define CREATE_HANDLER(f, id, ...)                                                \
-void f(void) {                \
- GLOBAL_HANDLER(id);          \
+/**
+  * @brief  This function handles NMI exception.
+  * @param  None
+  * @retval None
+  */
+void NMI_Handler(void)
+{
 }
 
-CREATE_HANDLER(Reset_Handler, 1);
-CREATE_HANDLER(NMI_Handler, 2);
-
+/**
+  * @brief  This function handles Hard Fault exception.
+  * @param  None
+  * @retval None
+  */
 void HardFault_Handler(void)
 {
-  GLOBAL_HANDLER(3);          
   /* Go to infinite loop when Hard Fault exception occurs */
   while (1)
   {
   }
 }
 
+/**
+  * @brief  This function handles Memory Manage exception.
+  * @param  None
+  * @retval None
+  */
 void MemManage_Handler(void)
 {
-  GLOBAL_HANDLER(4);          
   /* Go to infinite loop when Memory Manage exception occurs */
   while (1)
   {
   }
 }
 
+/**
+  * @brief  This function handles Bus Fault exception.
+  * @param  None
+  * @retval None
+  */
 void BusFault_Handler(void)
 {
-  GLOBAL_HANDLER(5);          
   /* Go to infinite loop when Bus Fault exception occurs */
   while (1)
   {
   }
 }
 
+/**
+  * @brief  This function handles Usage Fault exception.
+  * @param  None
+  * @retval None
+  */
 void UsageFault_Handler(void)
 {
-  GLOBAL_HANDLER(6);          
   /* Go to infinite loop when Usage Fault exception occurs */
   while (1)
   {
   }
 }
 
-CREATE_HANDLER(SVC_Handler, 11);
-CREATE_HANDLER(DebugMon_Handler, 12);
-CREATE_HANDLER(PendSV_Handler, 14);
-CREATE_HANDLER(SysTick_Handler, 15);
-CREATE_HANDLER(WWDG_IRQHandler, 16);
-CREATE_HANDLER(PVD_IRQHandler, 17);
-CREATE_HANDLER(TAMPER_STAMP_IRQHandler, 18);
-CREATE_HANDLER(RTC_WKUP_IRQHandler, 19);
-CREATE_HANDLER(FLASH_IRQHandler, 20);
-CREATE_HANDLER(RCC_IRQHandler, 21);
-CREATE_HANDLER(EXTI0_IRQHandler, 22);
-CREATE_HANDLER(EXTI1_IRQHandler, 23);
-CREATE_HANDLER(EXTI2_IRQHandler, 24);
-CREATE_HANDLER(EXTI3_IRQHandler, 25);
-CREATE_HANDLER(EXTI4_IRQHandler, 26);
-CREATE_HANDLER(DMA1_Channel1_IRQHandler, 27);
-CREATE_HANDLER(DMA1_Channel2_IRQHandler, 28);
-CREATE_HANDLER(DMA1_Channel3_IRQHandler, 29);
-CREATE_HANDLER(DMA1_Channel4_IRQHandler, 30);
-CREATE_HANDLER(DMA1_Channel5_IRQHandler, 31);
-CREATE_HANDLER(DMA1_Channel6_IRQHandler, 32);
-CREATE_HANDLER(DMA1_Channel7_IRQHandler, 33);
-CREATE_HANDLER(ADC1_IRQHandler, 34);
-CREATE_HANDLER(USB_HP_IRQHandler, 35);
-CREATE_HANDLER(USB_LP_IRQHandler, 36);
-CREATE_HANDLER(DAC_IRQHandler, 37);
-CREATE_HANDLER(COMP_IRQHandler, 38);
-CREATE_HANDLER(EXTI9_5_IRQHandler, 39);
-CREATE_HANDLER(LCD_IRQHandler, 40);
-CREATE_HANDLER(TIM9_IRQHandler, 41);
-CREATE_HANDLER(TIM10_IRQHandler, 42);
-CREATE_HANDLER(TIM11_IRQHandler, 43);
-CREATE_HANDLER(TIM2_IRQHandler, 44);
-CREATE_HANDLER(TIM3_IRQHandler, 45);
-CREATE_HANDLER(TIM4_IRQHandler, 46);
-CREATE_HANDLER(I2C1_EV_IRQHandler, 47);
-CREATE_HANDLER(I2C1_ER_IRQHandler, 48);
-CREATE_HANDLER(I2C2_EV_IRQHandler, 49);
-CREATE_HANDLER(I2C2_ER_IRQHandler, 50);
-CREATE_HANDLER(SPI1_IRQHandler, 51);
-CREATE_HANDLER(SPI2_IRQHandler, 52);
-CREATE_HANDLER(USART1_IRQHandler, 53);
-CREATE_HANDLER(USART2_IRQHandler, 54);
-CREATE_HANDLER(USART3_IRQHandler, 55);
-CREATE_HANDLER(EXTI15_10_IRQHandler, 56);
-CREATE_HANDLER(RTC_Alarm_IRQHandler, 57);
-CREATE_HANDLER(USB_FS_WKUP_IRQHandler, 58);
-CREATE_HANDLER(TIM6_IRQHandler, 59);
-CREATE_HANDLER(TIM7_IRQHandler, 60);
-CREATE_HANDLER(TIM5_IRQHandler, 62);
-CREATE_HANDLER(SPI3_IRQHandler, 63);
-CREATE_HANDLER(UART4_IRQHandler, 64);
-CREATE_HANDLER(UART5_IRQHandler, 65);
-CREATE_HANDLER(DMA2_Channel1_IRQHandler, 66);
-CREATE_HANDLER(DMA2_Channel2_IRQHandler, 67);
-CREATE_HANDLER(DMA2_Channel3_IRQHandler, 68);
-CREATE_HANDLER(DMA2_Channel4_IRQHandler, 69);
-CREATE_HANDLER(DMA2_Channel5_IRQHandler, 70);
-CREATE_HANDLER(COMP_ACQ_IRQHandler, 72);
-CREATE_HANDLER(BootRAM, 78);
+/**
+  * @brief  This function handles SVCall exception.
+  * @param  None
+  * @retval None
+  */
+void SVC_Handler(void)
+{
+}
+
+/**
+  * @brief  This function handles Debug Monitor exception.
+  * @param  None
+  * @retval None
+  */
+void DebugMon_Handler(void)
+{
+}
+
+/**
+  * @brief  This function handles PendSVC exception.
+  * @param  None
+  * @retval None
+  */
+void PendSV_Handler(void)
+{
+}
+
+/**
+  * @brief  This function handles SysTick Handler.
+  * @param  None
+  * @retval None
+  */
+void SysTick_Handler(void)
+{
+  GLOBAL_HANDLER(15);
+}
+
+/******************************************************************************/
+/*                 STM32L1xx Peripherals Interrupt Handlers                   */
+/*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
+/*  available peripheral interrupt handler's name please refer to the startup */
+/*  file (startup_stm32l1xx.s).                                               */
+/******************************************************************************/
+
+/**
+  * @brief  This function handles external lines 15 to 10 interrupt request.
+  * @param  None
+  * @retval None
+  */
+void EXTI15_10_IRQHandler(void)
+{
+  GLOBAL_HANDLER(56);
+}
+
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
+
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
