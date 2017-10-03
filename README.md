@@ -14,6 +14,7 @@ We extended this makefile to use the Inception project.
   - `native`     Builds the binary.
   - `run-klee`   Runs Inception's klee.
   - `program`    Flashes the ELF binary to the target board.
+  - `flash`      Flashes the binary via USB and ST-Link.
   - `debug`      Launches GDB and connects to the target.
   - `cube`       Downloads the most recent STM32Cube version from the ST website and extract it to `cube`.
   - `template`   Copies a simple example/template, startup code and a linker script from the `cube` to your `src` directory.

@@ -6,6 +6,7 @@
 # Usage:
 #	make cube		Download and unzip Cube firmware
 #	make program		Flash the board with OpenOCD
+#	make flah		Flash by copy/pasting via USB
 #	make openocd		Start OpenOCD
 #	make debug		Start GDB and attach to OpenOCD
 #	make dirs		Create subdirs like obj, dep, ..
@@ -64,6 +65,9 @@ CMSIS_DIR  = $(CUBE_DIR)/Drivers/CMSIS
 DEV_DIR    = $(CMSIS_DIR)/Device/ST/STM32L1xx
 
 CUBE_URL   = http://www.st.com/st-web-ui/static/active/en/st_prod_software_internet/resource/technical/software/firmware/stm32cubel1.zip
+
+# Device Path when conncted via USB and ST Link
+DEVICE_PATH=/media/giovanni/NODE_L152RE
 
 # that's it, no need to change anything below this line!
 
@@ -150,7 +154,7 @@ endif
 
 ###################################################
 
-.PHONY: all dirs program debug template clean inception native run-klee
+.PHONY: all dirs program debug template clean inception native run-klee flash
 
 all: inception
 
@@ -205,8 +209,17 @@ inception: $(TARGET)_merged.bc
 openocd:
 	$(OCD) -s $(OCD_DIR) $(OCDFLAGS)
 
-program: all
+program: native
 	$(OCD) -s $(OCD_DIR) $(OCDFLAGS) -c "program $(TARGET).elf verify reset"
+
+flash: native
+	@echo "Make sure you have configured the board for USB flash"
+	@echo "  1. TDO, NRST connected to SWD instead of the FPGA"
+	@echo "  2. CN2 jumpers ON"
+	@echo "  3. correct DEVICE_PATH in this makefile"
+	@echo "Flashing"
+	cp $(TARGET).bin $(DEVICE_PATH)/$(TARGET).bin
+	@echo "Done, remember to reset the board pressing the black (B2) button"
 
 debug:
 	@if ! nc -z localhost 3333; then \
