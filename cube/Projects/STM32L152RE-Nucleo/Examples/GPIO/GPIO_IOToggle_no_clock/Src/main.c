@@ -81,7 +81,8 @@ int main(void)
 
   /* Configure the system clock to 32 MHz */
   //SystemClock_Config();
-  
+  HAL_ResumeTick(); 
+ 
   /* -1- Enable each GPIO Clock (to be able to program the configuration registers) */
   LED2_GPIO_CLK_ENABLE();
 

@@ -79,6 +79,7 @@ int main(void)
 
   /* Configure the system clock to 32 MHz */
   //SystemClock_Config();
+  HAL_ResumeTick();  
 
   /* -2- Configure External line 15 to 10 (connected to PC.13 pin) in interrupt mode */
   EXTI15_10_IRQHandler_Config();

@@ -77,8 +77,10 @@ int main(void)
   /* -1- Initialize LEDs mounted on STM32L152RE-Nucleo Rev C board */
   BSP_LED_Init(LED2);
 
-  /* Configure the system clock to 32 MHz */
+  /* Configure the system clock to 32 MHz and also suspend SysTick,
+     the application in Klee resumes it later */
   SystemClock_Config();
+  HAL_SuspendTick();
 
   /* -2- Initialize irq_ack pin*/
   GPIO_InitTypeDef   GPIO_InitStructure_irq_ack;
