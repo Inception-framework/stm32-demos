@@ -1,5 +1,9 @@
 {
     "Board" : "STM32L152RE Nucleo",
+    "Analyzer" : [
+      { "Redirection": 1 },
+      { "Debugger"   : 0 }
+    ],
     "RealMemory" : [
       { "name": "PERIPH_BB_ALIAS_1", "address" : "42470000", "size": "4", "Access": "0"},
       { "name": "PERIPH_BB_ALIAS_2", "address" : "42470060", "size": "4", "Access": "0"},
