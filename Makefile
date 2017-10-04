@@ -141,6 +141,7 @@ CLANG_FLAGS=-mthumb --target=thumbv7m-eabi -mcpu=cortex-m3
 CLANG_FLAGS    += $(INCS) $(DEFS)
 CLANG_FLAGS    += -emit-llvm -g -S
 CLANG_FLAGS    += $(INCEPTION_PATH)/Analyzer/include/
+CLANG_FLAGS    += -I/usr/include/newlib/
 
 INCEPTION-CL=$(INCEPTION_PATH)/Compiler/Debug+Asserts/bin/inception-cl
 INCEPTION_FLAGS=
