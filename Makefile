@@ -51,7 +51,9 @@ SRCS      += system_$(MCU_FAMILY).c
 SRCS      += stm32l1xx_it.c
 
 # Basic HAL libraries
-SRCS      += stm32l1xx_hal_rcc.c stm32l1xx_hal_rcc_ex.c stm32l1xx_hal.c stm32l1xx_hal_cortex.c stm32l1xx_hal_gpio.c stm32l1xx_hal_pwr_ex.c $(BSP_BASE).c
+#SRCS      += stm32l1xx_hal_rcc.c stm32l1xx_hal_rcc_ex.c stm32l1xx_hal.c stm32l1xx_hal_cortex.c stm32l1xx_hal_gpio.c stm32l1xx_hal_pwr_ex.c $(BSP_BASE).c
+SRCS += $(BSP_BASE).c
+SRCS += $(shell find cube/Drivers/STM32L1xx_HAL_Driver/Src -maxdepth 1 -type f -printf "%f ")
 
 # Directories
 OCD_DIR    = /usr/share/openocd/scripts
@@ -204,7 +206,7 @@ $(TARGET)_merged.bc: $(TARGET).elf.ll
 	@echo "[LLVM-AS] $(TARGET)_merged.bc"
 	$Q$(LLVM-AS) $(TARGET).elf.ll -o $(TARGET)_merged.bc
 
-inception: $(TARGET)_merged.bc
+inception: $(TARGET)_merged.bc 
 
 
 openocd:
@@ -268,4 +270,5 @@ clean-inception: clean-native
 	@echo "[RMDIR]   ll"               ; rm -fr ll
 
 clean-klee:
+	@echo "[RM]      *.dump"           ; rm -f *.dump
 	@echo "[RM]      klee*" ; rm -rf klee*
