@@ -51,9 +51,9 @@ SRCS      += system_$(MCU_FAMILY).c
 SRCS      += stm32l1xx_it.c
 
 # Basic HAL libraries
-#SRCS      += stm32l1xx_hal_rcc.c stm32l1xx_hal_rcc_ex.c stm32l1xx_hal.c stm32l1xx_hal_cortex.c stm32l1xx_hal_gpio.c stm32l1xx_hal_pwr_ex.c $(BSP_BASE).c
-SRCS += $(BSP_BASE).c
-SRCS += $(shell find cube/Drivers/STM32L1xx_HAL_Driver/Src -maxdepth 1 -type f -printf "%f ")
+SRCS      += stm32l1xx_hal_rcc.c stm32l1xx_hal_rcc_ex.c stm32l1xx_hal.c stm32l1xx_hal_cortex.c stm32l1xx_hal_gpio.c stm32l1xx_hal_pwr_ex.c $(BSP_BASE).c
+#SRCS += $(BSP_BASE).c
+#SRCS += $(shell find cube/Drivers/STM32L1xx_HAL_Driver/Src -maxdepth 1 -type f -printf "%f ")
 
 # Directories
 OCD_DIR    = /usr/share/openocd/scripts
