@@ -35,6 +35,8 @@ GDBFLAGS   =
 #EXAMPLE   = Templates
 EXAMPLE    = Examples/RCC/RCC_ClockConfig
 
+FreeRTOS   = false
+
 # MCU family and type in various capitalizations o_O
 MCU_FAMILY = stm32l1xx
 MCU_LC     = stm32l152xe
@@ -52,8 +54,18 @@ SRCS      += stm32l1xx_it.c
 
 # Basic HAL libraries
 SRCS      += stm32l1xx_hal_rcc.c stm32l1xx_hal_rcc_ex.c stm32l1xx_hal.c stm32l1xx_hal_cortex.c stm32l1xx_hal_gpio.c stm32l1xx_hal_pwr_ex.c $(BSP_BASE).c
+
+#SRCS      += stm32l1xx_hal_adc.c stm32l1xx_hal_dma.c stm32l1xx_hal_dac.c stm32l1xx_hal_dac_ex.c stm32l1xx_hal_adc_ex.c
+
 #SRCS += $(BSP_BASE).c
 #SRCS += $(shell find cube/Drivers/STM32L1xx_HAL_Driver/Src -maxdepth 1 -type f -printf "%f ")
+
+# freeRTOS
+ifeq ($(FreeRTOS),true)
+	SRCS += $(shell find cube/Middlewares/Third_Party/FreeRTOS/Source/ -maxdepth 2 -type f -name *.c -printf "%f ")
+	SRCS += $(shell find cube/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3 -maxdepth 2 -type f -name *.c -printf "%f ")
+	SRCS += heap_1.c
+endif 
 
 # Directories
 OCD_DIR    = /usr/share/openocd/scripts
@@ -63,6 +75,7 @@ CUBE_DIR   = cube
 BSP_DIR    = $(CUBE_DIR)/Drivers/BSP/STM32L1xx_Nucleo/
 HAL_DIR    = $(CUBE_DIR)/Drivers/STM32L1xx_HAL_Driver
 CMSIS_DIR  = $(CUBE_DIR)/Drivers/CMSIS
+RTOS_DIR   = $(CUBE_DIR)/Middlewares/Third_Party/FreeRTOS
 
 DEV_DIR    = $(CMSIS_DIR)/Device/ST/STM32L1xx
 
@@ -105,6 +118,13 @@ INCS      += -I$(CMSIS_DIR)/Include
 INCS      += -I$(DEV_DIR)/Include
 INCS      += -I$(HAL_DIR)/Inc
 
+# freeRTOS
+ifeq ($(FreeRTOS),true)
+	INCS      += -I$(RTOS_DIR)/Source/CMSIS_RTOS
+	INCS      += -I$(RTOS_DIR)/Source/include
+	INCS      += -I$(RTOS_DIR)/Source/portable/GCC/ARM_CM3
+endif
+
 # Library search paths
 LIBS       = -L$(CMSIS_DIR)/Lib
 
@@ -127,6 +147,15 @@ VPATH      = ./src
 VPATH     += $(BSP_DIR)
 VPATH     += $(HAL_DIR)/Src
 VPATH     += $(DEV_DIR)/Source/
+
+#freeRTOS
+ifeq ($(FreeRTOS),true)
+	VPATH     += $(RTOS_DIR)/Source/
+	VPATH     += $(RTOS_DIR)/Source/CMSIS_RTOS/
+	VPATH     += $(RTOS_DIR)/Source/portable/MemMang
+	VPATH     += $(RTOS_DIR)/Source/portable/Common
+	VPATH     += $(RTOS_DIR)/Source/portable/GCC/ARM_CM3
+endif
 
 OBJS       = $(addprefix obj/,$(SRCS:.c=.o))
 LLS        = $(addprefix ll/,$(SRCS:.c=.ll))
