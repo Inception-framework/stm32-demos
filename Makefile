@@ -54,7 +54,7 @@ SRCS      += stm32l1xx_it.c
 
 # Basic HAL libraries
 SRCS      += stm32l1xx_hal_rcc.c stm32l1xx_hal_rcc_ex.c stm32l1xx_hal.c stm32l1xx_hal_cortex.c stm32l1xx_hal_gpio.c stm32l1xx_hal_pwr_ex.c $(BSP_BASE).c
-SRCS       += stm32l1xx_ll_utils.c
+#SRCS       += stm32l1xx_ll_utils.c
 #SRCS      += stm32l1xx_hal_adc.c stm32l1xx_hal_dma.c stm32l1xx_hal_dac.c stm32l1xx_hal_dac_ex.c stm32l1xx_hal_adc_ex.c
 
 #SRCS += $(BSP_BASE).c
@@ -201,9 +201,9 @@ obj/%.o : %.c | dirs
 	@echo "[CC]      $(notdir $<)"
 	$Q$(CC) $(CFLAGS) -c -o $@ $< -MMD -MF dep/$(*F).d
 
-$(TARGET).elf: $(OBJS)
+$(TARGET).elf: $(OBJS) src/startup_$(MCU_LC).s
 	@echo "[LD]      $(TARGET).elf"
-	$Q$(CC) $(CFLAGS) $(LDFLAGS) src/startup_$(MCU_LC).s $^ -o $@
+	$Q$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
 	@echo "[OBJDUMP] $(TARGET).lst"
 	$Q$(OBJDUMP) -St $(TARGET).elf >$(TARGET).lst
 	@echo "[SIZE]    $(TARGET).elf"
