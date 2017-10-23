@@ -2,6 +2,7 @@
     "Board" : "STM32L152RE Nucleo",
     "Analyzer" : [
       { "Redirection": 1 },
+      { "DynamicInterruptTable": 1 },
       { "Debugger"   : 0 }
     ],
     "RealMemory" : [
