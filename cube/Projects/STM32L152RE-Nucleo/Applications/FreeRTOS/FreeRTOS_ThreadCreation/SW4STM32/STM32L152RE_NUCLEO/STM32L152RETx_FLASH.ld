@@ -34,6 +34,8 @@ ENTRY(Reset_Handler)
 
 /* Highest address of the user mode stack */
 _estack = 0x20014000;    /* end of RAM */
+_user_stack_size = 0x400;
+_user_stack_start = _estack - _user_stack_size;    /* end of RAM */
 /* Generate a link error if heap and stack don't fit into RAM */
 _Min_Heap_Size = 0x200;      /* required amount of heap  */
 _Min_Stack_Size = 0x400; /* required amount of stack */
@@ -49,10 +51,10 @@ RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 80K
 SECTIONS
 {
   /* The startup code goes first into FLASH */
-  .isr_vector :
+  .interrupt_vector :
   {
     . = ALIGN(4);
-    KEEP(*(.isr_vector)) /* Startup code */
+    KEEP(*(.interrupt_vector)) /* Startup code */
     . = ALIGN(4);
   } >FLASH
 
@@ -143,17 +145,32 @@ SECTIONS
   } >RAM
 
   /* User_heap_stack section, used to check that there is enough RAM left */
-  ._user_heap_stack :
+  .heap :
   {
     . = ALIGN(8);
     PROVIDE ( end = . );
     PROVIDE ( _end = . );
     . = . + _Min_Heap_Size;
+    . = ALIGN(8);
+  } >RAM
+
+   .stack :
+  {
+    . = ALIGN(8);
+    PROVIDE ( end = . );
+    PROVIDE ( _end = . );
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
   } >RAM
 
-  
+    .user_stack _user_stack_start :
+  {
+    /*. = ALIGN(8);*/
+    PROVIDE ( end = . );
+    PROVIDE ( _end = . );
+    . = . + _user_stack_size;
+    /*. = ALIGN(8);*/
+  } >RAM
 
   /* Remove information from the standard libraries */
   /DISCARD/ :
