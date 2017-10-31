@@ -55,8 +55,8 @@ SRCS      += stm32l1xx_it.c
 # Basic HAL libraries
 SRCS      += stm32l1xx_hal_rcc.c stm32l1xx_hal_rcc_ex.c stm32l1xx_hal.c stm32l1xx_hal_cortex.c stm32l1xx_hal_gpio.c stm32l1xx_hal_pwr_ex.c $(BSP_BASE).c
 #SRCS       += stm32l1xx_ll_utils.c
-#SRCS      += stm32l1xx_hal_adc.c stm32l1xx_hal_dma.c stm32l1xx_hal_dac.c stm32l1xx_hal_dac_ex.c stm32l1xx_hal_adc_ex.c
-
+SRCS      += stm32l1xx_hal_adc.c stm32l1xx_hal_dma.c stm32l1xx_hal_dac.c stm32l1xx_hal_dac_ex.c stm32l1xx_hal_adc_ex.c
+#SRCS      += stm32l1xx_hal_uart.c stm32l1xx_hal_usart.c stm32l1xx_hal_dma.c
 #SRCS += $(BSP_BASE).c
 #SRCS += $(shell find cube/Drivers/STM32L1xx_HAL_Driver/Src -maxdepth 1 -type f -printf "%f ")
 
@@ -169,7 +169,7 @@ LLVM-AS=$(CLANG_PATH)/llvm-as
 
 CLANG_FLAGS=-mthumb --target=thumbv7m-eabi -mcpu=cortex-m3
 #CLANG_FLAGS    += -ffunction-sections -fdata-sections
-CLANG_FLAGS    += $(INCS) $(DEFS)
+CLANG_FLAGS    += $(INCS) $(DEFS) -DKLEE
 CLANG_FLAGS    += -emit-llvm -g -S
 CLANG_FLAGS    += $(INCEPTION_PATH)/Analyzer/include/
 CLANG_FLAGS    += -I/usr/include/newlib/
