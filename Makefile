@@ -84,6 +84,9 @@ CUBE_URL   = http://www.st.com/st-web-ui/static/active/en/st_prod_software_inter
 # Device Path when conncted via USB and ST Link
 DEVICE_PATH=/media/giovanni/NODE_L152RE
 
+# start of deterministic allocation for host addresses
+DET_ALLOC_START = 0xf0000000
+
 # that's it, no need to change anything below this line!
 
 ###############################################################################
@@ -280,7 +283,7 @@ template: cube src
 	cp -i $(CUBE_DIR)/Projects/$(BOARD)/$(LDFILE) $(MCU_LC).ld
 
 run-klee:
-	klee --search=dfs $(TARGET)_merged.bc
+	klee --allocate-determ --allocate-determ-start-address $(DET_ALLOC_START) $(TARGET)_merged.bc
 
 clean: clean-native clean-inception clean-klee
 
