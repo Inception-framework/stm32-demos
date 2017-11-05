@@ -170,6 +170,7 @@ void DebugMon_Handler(void)
   */
 void PendSV_Handler(void)
 {
+  GLOBAL_HANDLER(14);
 }
 
 /**
