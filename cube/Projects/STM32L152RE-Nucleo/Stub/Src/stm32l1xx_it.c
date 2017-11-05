@@ -147,6 +147,11 @@ void UsageFault_Handler(void)
   */
 void SVC_Handler(void)
 {
+   // return in privileged mode
+   __asm volatile("mrs r0, control");
+   __asm volatile("ldr r1, =0xfffffffe");
+   __asm volatile("and r0, r1");
+   __asm volatile("msr control,r0");
 }
 
 /**

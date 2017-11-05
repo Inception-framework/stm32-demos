@@ -101,6 +101,10 @@ int main(void)
 
   HAL_GPIO_WritePin(GPIOC,GPIO_PIN_10, GPIO_PIN_RESET);
 
+  /* -4- Make sure we are in privilege mode, this is necessary to be able
+         to write basepri from jtag  */ 
+  __asm volatile("svc 0");
+
   /* Infinite loop */
   while (1)
   {
