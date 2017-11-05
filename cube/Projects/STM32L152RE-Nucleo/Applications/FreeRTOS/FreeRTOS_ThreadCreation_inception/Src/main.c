@@ -119,7 +119,12 @@ int main(void)
   * @retval None
   */
 static void LED_Thread1(void const *argument)
-{
+{ 
+  #ifdef KLEE
+  stop_irq();
+  printf("\nentering Thread 1\n");
+  #endif
+
   uint32_t count = 0;
   (void) argument;
 
@@ -154,6 +159,11 @@ static void LED_Thread1(void const *argument)
   */
 static void LED_Thread2(void const *argument)
 {
+  #ifdef KLEE
+  stop_irq();
+  printf("\nentering Thread 2\n");
+  #endif
+
   uint32_t count;
   (void) argument;
 
