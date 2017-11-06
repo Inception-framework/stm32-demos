@@ -75,6 +75,8 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+#include <assert.h>
+
 /* For backward compatibility, ensure configKERNEL_INTERRUPT_PRIORITY is
 defined.  The value should also ensure backward compatibility.
 FreeRTOS.org versions prior to V4.4.0 did not include this definition. */
@@ -367,6 +369,15 @@ void vPortEndScheduler( void )
 	configASSERT( uxCriticalNesting == 1000UL );
 }
 /*-----------------------------------------------------------*/
+void assert_is_not_irq(){
+  #ifdef KLEE
+  int kleeVECTACTIVE;
+  is_irq(&kleeVECTACTIVE);
+  assert(kleeVECTACTIVE == 0);
+  #else
+  configASSERT( ( portNVIC_INT_CTRL_REG & portVECTACTIVE_MASK ) == 0 );
+  #endif
+}
 
 void vPortEnterCritical( void )
 {
@@ -380,7 +391,8 @@ void vPortEnterCritical( void )
 	assert function also uses a critical section. */
 	if( uxCriticalNesting == 1 )
 	{
-		configASSERT( ( portNVIC_INT_CTRL_REG & portVECTACTIVE_MASK ) == 0 );
+                assert_is_not_irq();
+		//configASSERT( ( portNVIC_INT_CTRL_REG & portVECTACTIVE_MASK ) == 0 );
 	}
 }
 /*-----------------------------------------------------------*/
