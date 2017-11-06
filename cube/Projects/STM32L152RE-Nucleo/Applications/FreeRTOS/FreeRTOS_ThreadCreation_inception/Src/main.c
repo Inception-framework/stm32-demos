@@ -46,6 +46,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include <assert.h>
+#include "../../../Analyzer/include/klee/klee.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -123,6 +125,10 @@ static void LED_Thread1(void const *argument)
   #ifdef KLEE
   stop_irq();
   printf("\nentering Thread 1\n");
+  int kleeVECTACTIVE;
+  is_irq(&kleeVECTACTIVE);
+  printf("\nICSR VECTACTIVE in Klee = %p\n",kleeVECTACTIVE);
+  assert(kleeVECTACTIVE == 0);
   #endif
 
   uint32_t count = 0;
