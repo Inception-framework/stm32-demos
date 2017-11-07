@@ -49,10 +49,10 @@ RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 80K
 SECTIONS
 {
   /* The startup code goes first into FLASH */
-  .isr_vector :
+  .interrupt_vector :
   {
     . = ALIGN(4);
-    KEEP(*(.isr_vector)) /* Startup code */
+    KEEP(*(.interrupt_vector)) /* Startup code */
     . = ALIGN(4);
   } >FLASH
 
