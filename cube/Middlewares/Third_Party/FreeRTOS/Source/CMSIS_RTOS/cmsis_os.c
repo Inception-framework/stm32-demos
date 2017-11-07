@@ -176,7 +176,7 @@ int getIPSR(){
   is_irq(&kleeVECTACTIVE);
   return kleeVECTACTIVE;
   #else
-  __get_IPSR();
+  return __get_IPSR();
   #endif
 }
 static int inHandlerMode (void)
