@@ -170,9 +170,19 @@ static osPriority makeCmsisPriority (unsigned portBASE_TYPE fpriority)
 
 
 /* Determine whether we are in thread mode or handler mode. */
+int getIPSR(){
+  #ifdef KLEE
+  int kleeVECTACTIVE;
+  is_irq(&kleeVECTACTIVE);
+  return kleeVECTACTIVE;
+  #else
+  __get_IPSR();
+  #endif
+}
 static int inHandlerMode (void)
 {
-  return __get_IPSR() != 0;
+  return getIPSR() != 0;
+  //return __get_IPSR() != 0;
 }
 
 /*********************** Kernel Control Functions *****************************/
