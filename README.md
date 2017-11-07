@@ -14,14 +14,14 @@ There are several ways to connect to the board. Please follow these instructions
 1. **Configure the board**:
   1. dissolder the jumpers SB12 and SB15
   2. connect the following jumper wires
-      - PB10  (red)     irq
-      - PB12  (white)   irq_ack
-      - PB13  (blue)    TMS
-      - PB14  (green)   TCK
-      - PB15  (yellow)  TDI
+      - PC10  (red)     irq
+      - PC12  (white)   irq_ack
+      - PA13  (blue)    TMS
+      - PA14  (green)   TCK
+      - PA15  (yellow)  TDI
       - GND   (grey)    GND
-      - PB3   (brown)   NRST
-      - PB4   (orange)  TDO / SWO
+      - PB4   (brown)   NRST
+      - PB3   (orange)  TDO / SWO
   3. now you can chose between several configurations
     1. USB/SWD (requires to have the ST-Link part connected)
         - CN2 jumpers both ON
