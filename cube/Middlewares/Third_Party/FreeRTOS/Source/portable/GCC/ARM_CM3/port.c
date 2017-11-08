@@ -372,7 +372,7 @@ void vPortEndScheduler( void )
 void assert_is_not_irq(){
   #ifdef KLEE
   int kleeVECTACTIVE;
-  is_irq(&kleeVECTACTIVE);
+  inception_is_irq(&kleeVECTACTIVE);
   assert(kleeVECTACTIVE == 0);
   #else
   configASSERT( ( portNVIC_INT_CTRL_REG & portVECTACTIVE_MASK ) == 0 );

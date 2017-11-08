@@ -173,7 +173,7 @@ static osPriority makeCmsisPriority (unsigned portBASE_TYPE fpriority)
 int getIPSR(){
   #ifdef KLEE
   int kleeVECTACTIVE;
-  is_irq(&kleeVECTACTIVE);
+  inception_is_irq(&kleeVECTACTIVE);
   return kleeVECTACTIVE;
   #else
   return __get_IPSR();

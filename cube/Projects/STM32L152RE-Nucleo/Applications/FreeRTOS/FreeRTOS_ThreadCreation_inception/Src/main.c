@@ -123,10 +123,10 @@ int main(void)
 static void LED_Thread1(void const *argument)
 { 
   #ifdef KLEE
-  stop_irq();
+  inception_stop_irq();
   printf("\nentering Thread 1\n");
   int kleeVECTACTIVE;
-  is_irq(&kleeVECTACTIVE);
+  inception_is_irq(&kleeVECTACTIVE);
   printf("\nICSR VECTACTIVE in Klee = %p\n",kleeVECTACTIVE);
   assert(kleeVECTACTIVE == 0);
   #endif
@@ -166,7 +166,7 @@ static void LED_Thread1(void const *argument)
 static void LED_Thread2(void const *argument)
 {
   #ifdef KLEE
-  stop_irq();
+  inception_stop_irq();
   printf("\nentering Thread 2\n");
   #endif
 
