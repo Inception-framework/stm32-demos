@@ -135,6 +135,9 @@ static void LED_Thread1(void const *argument)
 
   for (;;)
   {
+    #ifdef KLEE
+    printf("\n[TH1] entering loop\n");
+    #endif
     count = osKernelSysTick() + 500; //5000;
 
     /* Turn on LED2 */
@@ -155,13 +158,20 @@ static void LED_Thread1(void const *argument)
     /* Resume Thread 2 */
     #ifdef KLEE
     printf("\n[TH1] resuming TH2\n");
+    disable_irq();
     #endif
     osThreadResume(LEDThread2Handle);
     /* Suspend Thread 1 : current thread */
     #ifdef KLEE
+    enable_irq();
     printf("\n[TH1] suspending TH1\n");
+    disable_irq();
     #endif
     osThreadSuspend(LEDThread1Handle);
+    #ifdef KLEE
+    enable_irq();
+    printf("\n[TH1] resuming\n");
+    #endif
   }
 }
 
@@ -180,6 +190,9 @@ static void LED_Thread2(void const *argument)
 
   for (;;)
   {
+    #ifdef KLEE
+    printf("\n[TH2] entering loop\n");
+    #endif
     count = osKernelSysTick() + 500; //10000;
 
     /* Turn on LED2 */
@@ -189,7 +202,7 @@ static void LED_Thread2(void const *argument)
     {
       /* Toggle LED2 every 500ms*/
       //osDelay(50);
-      uint32_t end = osKernelSysTick() + 50;
+      uint32_t end = osKernelSysTick() + 75;
       while(end > osKernelSysTick());
       BSP_LED_Toggle(LED2);
     }
@@ -200,14 +213,21 @@ static void LED_Thread2(void const *argument)
     /* Resume Thread 1 */
     #ifdef KLEE
     printf("\n[TH2] resuming TH1\n");
+    disable_irq();
     #endif
     osThreadResume(LEDThread1Handle);
     
     /* Suspend Thread2 : current thread */
     #ifdef KLEE
+    enable_irq();
     printf("\n[TH2] suspending TH2\n");
+    disable_irq();
     #endif
     osThreadSuspend(LEDThread2Handle); 
+    #ifdef KLEE
+    enable_irq();
+    printf("\n[TH1] resuming\n");
+    #endif
   }
 }
 
