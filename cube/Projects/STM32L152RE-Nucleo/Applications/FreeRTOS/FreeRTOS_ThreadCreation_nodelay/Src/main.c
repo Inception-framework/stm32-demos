@@ -93,7 +93,7 @@ int main(void)
   BSP_LED_Init(LED2);
  
   /* Thread 1 definition */
-  osThreadDef(THREAD_1, LED_Thread1, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
+  osThreadDef(THREAD_1, LED_Thread1, osPriorityNormal, 0xffff0000, configMINIMAL_STACK_SIZE);
   
   /* Thread 2 definition */
   osThreadDef(THREAD_2, LED_Thread2, osPriorityNormal, 0, configMINIMAL_STACK_SIZE);
@@ -123,8 +123,7 @@ int main(void)
 static void LED_Thread1(void const *argument)
 { 
   #ifdef KLEE
-  inception_stop_irq();
-  printf("\nentering Thread 1\n");
+  printf("\n[TH1] entering\n");
   int kleeVECTACTIVE;
   inception_is_irq(&kleeVECTACTIVE);
   printf("\nICSR VECTACTIVE in Klee = %p\n",kleeVECTACTIVE);
@@ -154,8 +153,14 @@ static void LED_Thread1(void const *argument)
     BSP_LED_Off(LED2);
 
     /* Resume Thread 2 */
+    #ifdef KLEE
+    printf("\n[TH1] resuming TH2\n");
+    #endif
     osThreadResume(LEDThread2Handle);
     /* Suspend Thread 1 : current thread */
+    #ifdef KLEE
+    printf("\n[TH1] suspending TH1\n");
+    #endif
     osThreadSuspend(LEDThread1Handle);
   }
 }
@@ -168,16 +173,14 @@ static void LED_Thread1(void const *argument)
 static void LED_Thread2(void const *argument)
 {
   #ifdef KLEE
-  inception_stop_irq();
-  printf("\nentering Thread 2\n");
+  printf("\n[TH2] entering\n");
   #endif
 
   uint32_t count;
-  (void) argument;
 
   for (;;)
   {
-    count = osKernelSysTick() + 1000; //10000;
+    count = osKernelSysTick() + 500; //10000;
 
     /* Turn on LED2 */
     BSP_LED_On(LED2);
@@ -185,8 +188,8 @@ static void LED_Thread2(void const *argument)
     while (count > osKernelSysTick())
     {
       /* Toggle LED2 every 500ms*/
-      //osDelay(500);
-      uint32_t end = osKernelSysTick() + 25;
+      //osDelay(50);
+      uint32_t end = osKernelSysTick() + 50;
       while(end > osKernelSysTick());
       BSP_LED_Toggle(LED2);
     }
@@ -195,8 +198,15 @@ static void LED_Thread2(void const *argument)
     BSP_LED_Off(LED2);
 
     /* Resume Thread 1 */
+    #ifdef KLEE
+    printf("\n[TH2] resuming TH1\n");
+    #endif
     osThreadResume(LEDThread1Handle);
+    
     /* Suspend Thread2 : current thread */
+    #ifdef KLEE
+    printf("\n[TH2] suspending TH2\n");
+    #endif
     osThreadSuspend(LEDThread2Handle); 
   }
 }
