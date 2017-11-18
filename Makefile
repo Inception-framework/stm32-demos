@@ -36,6 +36,7 @@ GDBFLAGS   =
 EXAMPLE    = Examples/RCC/RCC_ClockConfig
 
 FreeRTOS   = false
+DSP   = false
 
 # MCU family and type in various capitalizations o_O
 MCU_FAMILY = stm32l1xx
@@ -48,9 +49,10 @@ LDFILE     = $(EXAMPLE)/SW4STM32/$(BOARD_UC)/$(MCU_UC)Tx_FLASH.ld
 #LDFILE     = $(EXAMPLE)/TrueSTUDIO/$(BOARD_UC)/$(MCU_UC)_FLASH.ld
 
 # Your C files from the /src directory
-SRCS       = main.c
-SRCS      += system_$(MCU_FAMILY).c
-SRCS      += stm32l1xx_it.c
+#SRCS       = main.c
+#SRCS      += system_$(MCU_FAMILY).c
+#SRCS      += stm32l1xx_it.c
+SRCS += $(shell find src -maxdepth 1 -type f -name "*.c" -printf "%f ")
 
 # Basic HAL libraries
 SRCS      += stm32l1xx_hal_rcc.c stm32l1xx_hal_rcc_ex.c stm32l1xx_hal.c stm32l1xx_hal_cortex.c stm32l1xx_hal_gpio.c stm32l1xx_hal_pwr_ex.c $(BSP_BASE).c
@@ -66,6 +68,14 @@ ifeq ($(FreeRTOS),true)
 	SRCS += $(shell find cube/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM3 -maxdepth 2 -type f -name *.c -printf "%f ")
 	SRCS += heap_1.c
 endif 
+
+# DSP
+ifeq ($(DSP),true)
+	SRCS += $(shell find cube/Drivers/CMSIS/DSP_Lib/Source -maxdepth 2 -type f -name "*.c" -printf "%f ")
+        #SRCS += arm_graphic_equalizer_data.c
+        #SRCS += math_helper.c
+endif 
+
 
 # Directories
 OCD_DIR    = /usr/share/openocd/scripts
@@ -128,6 +138,14 @@ ifeq ($(FreeRTOS),true)
 	INCS      += -I$(RTOS_DIR)/Source/portable/GCC/ARM_CM3
 endif
 
+# freeRTOS
+ifeq ($(DSP),true)
+	INCS      += -I$(CMSIS_DIR)/Include
+	INCS      += -I$(RTOS_DIR)/Source/CMSIS_RTOS
+	INCS      += -I$(RTOS_DIR)/Source/include
+	INCS      += -I$(RTOS_DIR)/Source/portable/GCC/ARM_CM3
+endif
+
 # Library search paths
 LIBS       = -L$(CMSIS_DIR)/Lib
 
@@ -158,6 +176,20 @@ ifeq ($(FreeRTOS),true)
 	VPATH     += $(RTOS_DIR)/Source/portable/MemMang
 	VPATH     += $(RTOS_DIR)/Source/portable/Common
 	VPATH     += $(RTOS_DIR)/Source/portable/GCC/ARM_CM3
+endif
+
+#freeRTOS
+ifeq ($(DSP),true)
+        VPATH     += $(CMSIS_DIR)/DSP_Lib/Source/BasicMathFunctions
+        VPATH     += $(CMSIS_DIR)/DSP_Lib/Source/CommonTables
+        VPATH     += $(CMSIS_DIR)/DSP_Lib/Source/ComplexMathFunctions
+        VPATH     += $(CMSIS_DIR)/DSP_Lib/Source/ControllerFunctions
+        VPATH     += $(CMSIS_DIR)/DSP_Lib/Source/FastMathFunctions
+        VPATH     += $(CMSIS_DIR)/DSP_Lib/Source/FilteringFunctions
+        VPATH     += $(CMSIS_DIR)/DSP_Lib/Source/MatrixFunctions
+        VPATH     += $(CMSIS_DIR)/DSP_Lib/Source/StatisticsFunctions
+        VPATH     += $(CMSIS_DIR)/DSP_Lib/Source/SupportFunctions
+        VPATH     += $(CMSIS_DIR)/DSP_Lib/Source/TransformFunctions
 endif
 
 OBJS       = $(addprefix obj/,$(SRCS:.c=.o))
