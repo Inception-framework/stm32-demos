@@ -320,7 +320,7 @@ template: cube src
 run-klee:
 	klee --allocate-determ --allocate-determ-start-address $(DET_ALLOC_START) $(TARGET)_merged.bc
 
-clean: clean-native clean-inception clean-klee
+clean: clean-native clean-inception clean-klee clean-src
 
 clean-native:
 	@echo "[RM]      $(TARGET).bin"; rm -f $(TARGET).bin
@@ -339,3 +339,7 @@ clean-inception: clean-native
 clean-klee:
 	@echo "[RM]      *.dump"           ; rm -f *.dump
 	@echo "[RM]      klee*" ; rm -rf klee*
+
+clean-src:
+	@echo "[RMDIR]   src"               ; rm -rf src
+	@echo "[RM]      *.ld"              ; rm -f *.ld
