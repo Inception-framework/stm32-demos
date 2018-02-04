@@ -200,6 +200,15 @@ void EXTI15_10_IRQHandler(void)
   GLOBAL_HANDLER(56);
 }
 
+void TIM6_IRQHandler(void){
+  GLOBAL_HANDLER(59);
+}
+
+void TIM7_IRQHandler(void){
+  GLOBAL_HANDLER(60);
+}
+
+
 /**
   * @}
   */
